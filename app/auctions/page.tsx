@@ -1,14 +1,26 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Auction, mockAuctions, getActiveAuctions, getUpcomingAuctions } from '@/lib/auctions';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { auth } from '@/lib/auth';
 
 export default function AuctionsPage() {
+  const router = useRouter();
   const [auctions, setAuctions] = useState<Auction[]>([]);
   const [filter, setFilter] = useState<'all' | 'active' | 'upcoming' | 'ended'>('all');
   const [loading, setLoading] = useState(true);
+
+  const handleAuctionAction = (action: string, auctionId: string) => {
+    if (!auth.getToken() || !auth.getUser()) {
+      router.push('/auth/login?redirect=/auctions');
+      return;
+    }
+    // Handle auction action logic here
+    console.log(`${action} for auction ${auctionId}`);
+  };
 
   useEffect(() => {
     // Simulate API call
@@ -185,10 +197,19 @@ export default function AuctionsPage() {
                 <div className="space-y-2">
                   {auction.status === 'active' && (
                     <>
-                      <Button className="w-full" size="sm">
+                      <Button 
+                        className="w-full" 
+                        size="sm"
+                        onClick={() => handleAuctionAction('join', auction.id)}
+                      >
                         Join Live Auction
                       </Button>
-                      <Button variant="outline" className="w-full" size="sm">
+                      <Button 
+                        variant="outline" 
+                        className="w-full" 
+                        size="sm"
+                        onClick={() => handleAuctionAction('view-catalog', auction.id)}
+                      >
                         View Catalog
                       </Button>
                     </>
@@ -196,10 +217,19 @@ export default function AuctionsPage() {
                   
                   {auction.status === 'upcoming' && (
                     <>
-                      <Button className="w-full" size="sm">
+                      <Button 
+                        className="w-full" 
+                        size="sm"
+                        onClick={() => handleAuctionAction('register-bid', auction.id)}
+                      >
                         Register to Bid
                       </Button>
-                      <Button variant="outline" className="w-full" size="sm">
+                      <Button 
+                        variant="outline" 
+                        className="w-full" 
+                        size="sm"
+                        onClick={() => handleAuctionAction('view-catalog', auction.id)}
+                      >
                         View Catalog
                       </Button>
                     </>

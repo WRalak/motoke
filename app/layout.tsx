@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { NotificationProvider } from "@/contexts/NotificationContext";
 
 export const metadata: Metadata = {
   title: "Motoke - Kenya's Trusted Automotive Marketplace",
@@ -22,11 +23,13 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col">
-        <Navbar />
-        <main className="flex-1">
-          {children}
-        </main>
-        <Footer />
+        <NotificationProvider>
+          <Navbar />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
+        </NotificationProvider>
       </body>
     </html>
   );

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import ProtectedRoute from '@/components/ProtectedRoute';
 import { mockRevenue, mockSales, mockCustomers } from '@/lib/admin-data';
 import { mockVehicles, mockDealers } from '@/lib/data';
 import { mockAuctions } from '@/lib/auctions';
@@ -89,7 +90,8 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="p-6">
+    <ProtectedRoute requiredRole="admin">
+      <div className="p-6">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
@@ -260,5 +262,6 @@ export default function AdminDashboard() {
         </CardContent>
       </Card>
     </div>
+    </ProtectedRoute>
   );
 }

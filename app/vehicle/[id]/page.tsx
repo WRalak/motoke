@@ -2,19 +2,31 @@
 
 import { useState, useEffect } from 'react';
 import { notFound } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Vehicle, Dealer, mockVehicles, mockDealers } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { auth } from '@/lib/auth';
 
 interface VehicleDetailPageProps {
   params: { id: string };
 }
 
 export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
+  const router = useRouter();
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [dealer, setDealer] = useState<Dealer | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
   const [loading, setLoading] = useState(true);
+
+  const handleVehicleAction = (action: string) => {
+    if (!auth.getToken() || !auth.getUser()) {
+      router.push(`/auth/login?redirect=/vehicle/${params.id}`);
+      return;
+    }
+    // Handle vehicle action logic here
+    console.log(`${action} for vehicle ${params.id}`);
+  };
 
   useEffect(() => {
     const foundVehicle = mockVehicles.find(v => v.id === params.id);
@@ -153,13 +165,28 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
                 </div>
                 
                 <div className="space-y-3">
-                  <Button className="w-full" size="lg" disabled={vehicle.status !== 'available'}>
+                  <Button 
+                    className="w-full" 
+                    size="lg" 
+                    disabled={vehicle.status !== 'available'}
+                    onClick={() => handleVehicleAction('make-offer')}
+                  >
                     Make Offer
                   </Button>
-                  <Button variant="outline" className="w-full" size="lg">
+                  <Button 
+                    variant="outline" 
+                    className="w-full" 
+                    size="lg"
+                    onClick={() => handleVehicleAction('schedule-test-drive')}
+                  >
                     Schedule Test Drive
                   </Button>
-                  <Button variant="outline" className="w-full" size="lg">
+                  <Button 
+                    variant="outline" 
+                    className="w-full" 
+                    size="lg"
+                    onClick={() => handleVehicleAction('contact-dealer')}
+                  >
                     Contact Dealer
                   </Button>
                 </div>

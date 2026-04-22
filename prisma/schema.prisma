@@ -6,445 +6,329 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
+// User Management
 model User {
-  id                String   @id @default(cuid())
-  email             String   @unique
-  password          String
-  name              String
-  phone             String?
-  role              UserRole @default(CUSTOMER)
-  status            UserStatus @default(ACTIVE)
-  emailVerified     Boolean  @default(false)
-  phoneVerified     Boolean  @default(false)
-  twoFactorEnabled  Boolean  @default(false)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  lastLoginAt       DateTime?
+  id          String   @id @default(cuid())
+  email       String   @unique
+  name        String
+  phone       String?
+  role        Role     @default(USER)
+  verified     Boolean  @default(false)
+  avatar      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   // Relations
-  customerProfile   CustomerProfile?
-  dealerProfile     DealerProfile?
-  salespersonProfile SalespersonProfile?
-  bids              Bid[]
-  proxyBids         ProxyBid[]
-  leads             Lead[]
-  sales             Sale[]
-  notifications     Notification[]
-  sessions          AuthSession[]
-
+  vehicles    Vehicle[]
+  listings    Listing[]
+  bids        Bid[]
+  messages     Message[]
+  notifications Notification[]
+  reviews     Review[]
+  
   @@map("users")
 }
 
-model CustomerProfile {
-  id                String @id @default(cuid())
-  userId            String @unique
-  county            String
-  city              String
-  dateOfBirth       DateTime
-  creditScore       Int?
-  income            Float?
-  employmentStatus  String?
-  employer          String?
-  preferences       Json? // { vehicleTypes, priceRange, financing, insurance }
-  documents         Json? // { licenseVerified, insuranceVerified, financingApproved }
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  // Relations
-  user              User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  sales             Sale[]
-  leads             Lead[]
-
-  @@map("customer_profiles")
+model Role {
+  USER        Role
+  ADMIN       Role
+  DEALER     Role
 }
 
-model DealerProfile {
-  id                String @id @default(cuid())
-  userId            String @unique
-  businessName      String
-  kraPin            String
-  county            String
-  city              String
-  address           String
-  phone             String
-  email             String
-  website           String?
-  description       String?
-  specialties       Json // e.g., ["Luxury", "SUV", "Electric"]
-  established       Int
-  rating            Float @default(0)
-  reviewCount       Int @default(0)
-  verified          Boolean @default(false)
-  subscriptionPlan  SubscriptionPlan @default(FREE)
-  subscriptionEndsAt DateTime?
-  mpesaNumber       String
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  // Relations
-  user              User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  vehicles          Vehicle[]
-  sales             Sale[]
-
-  @@map("dealer_profiles")
-}
-
-model SalespersonProfile {
-  id                String @id @default(cuid())
-  userId            String @unique
-  hireDate          DateTime
-  commissionRate    Float @default(3.0)
-  monthlyTarget     Float @default(150000)
-  ytdSales          Float @default(0)
-  ytdCommission     Float @default(0)
-  specialties       Json
-  status            String @default("active")
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  // Relations
-  user              User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  sales             Sale[]
-  leads             Lead[]
-
-  @@map("salesperson_profiles")
-}
-
+// Vehicle Management
 model Vehicle {
-  id                String @id @default(cuid())
-  make              String
-  model             String
-  year              Int
-  mileage           Int
-  vin               String @unique
-  price             Float
-  status            VehicleStatus @default(PENDING)
-  images            Json
-  description       String
-  features          Json
-  engineSize        String?
-  transmission      String?
-  fuelType          String?
-  driveType         String?
-  colour            String?
-  county            String
-  ntsaStatus        NtsaStatus
-  dealerId          String
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  // Relations
-  dealer            DealerProfile @relation(fields: [dealerId], references: [userId])
-  bids              Bid[]
-  proxyBids         ProxyBid[]
-  auctionVehicles   AuctionVehicle[]
-  sales             Sale[]
-
+  id          String   @id @default(cuid())
+  make        String
+  model       String
+  year        Int
+  mileage     Int
+  vin         String   @unique
+  price       Int
+  status      VehicleStatus @default(AVAILABLE)
+  description String?
+  engineSize  String?
+  transmission String?
+  fuelType    String?
+  driveType   String?
+  colour      String?
+  county      String?
+  ntsaStatus  String?
+  images      String[] // JSON array of image URLs
+  features    String[] // JSON array of features
+  
+  // Foreign Keys
+  dealerId    String
+  dealer      Dealer?  @relation(fields: [dealerId], references: [id])
+  listingId   String?
+  listing     Listing? @relation(fields: [listingId], references: [id])
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
   @@map("vehicles")
 }
 
-model Auction {
-  id                String @id @default(cuid())
-  title             String
-  description       String
-  type              AuctionType @default(ONLINE)
-  status            AuctionStatus @default(UPCOMING)
-  startDate         DateTime
-  endDate           DateTime
-  location          String?
-  onlineUrl         String?
-  organizer         String
-  fees              Json // { buyerPremium, registrationFee, otherFees }
-  requirements      Json // { deposit, maxBidders, preApproval }
-  images            Json
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+model VehicleStatus {
+  AVAILABLE
+  SOLD
+  RESERVED
+  PENDING
+}
 
+// Dealer Management
+model Dealer {
+  id           String    @id @default(cuid())
+  name         String
+  email        String   @unique
+  phone        String
+  address      String
+  city         String
+  state        String
+  zipCode      String
+  description  String?
+  specialties  String[]   // JSON array of specialties
+  rating       Float     @default(0)
+  reviewCount  Int       @default(0)
+  verified     Boolean    @default(false)
+  established  String?
+  logo         String?
+  
   // Relations
-  auctionVehicles   AuctionVehicle[]
+  users        User[]
+  vehicles     Vehicle[]
+  
+  // Timestamps
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  @@map("dealers")
+}
 
+// Listings (Vehicle for sale by users)
+model Listing {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  price       Int
+  status      ListingStatus @default(ACTIVE)
+  
+  // Foreign Keys
+  vehicleId   String
+  vehicle     Vehicle @relation(fields: [vehicleId], references: [id])
+  
+  sellerId    String
+  seller      User @relation(fields: [sellerId], references: [id])
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("listings")
+}
+
+model ListingStatus {
+  ACTIVE
+  EXPIRED
+  SOLD
+  PENDING
+}
+
+// Auction Management
+model Auction {
+  id              String    @id @default(cuid())
+  title           String
+  description     String
+  startBid       Int
+  currentBid     Int?
+  startDate       DateTime
+  endDate         DateTime
+  status          AuctionStatus @default(UPCOMING)
+  
+  // Foreign Keys
+  vehicleId       String
+  vehicle         Vehicle @relation(fields: [vehicleId], references: [id])
+  
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
   @@map("auctions")
 }
 
-model AuctionVehicle {
-  id                String @id @default(cuid())
-  vehicleId         String
-  auctionId         String
-  startingBid       Float
-  currentBid        Float?
-  reservePrice      Float?
-  bidCount          Int @default(0)
-  status            String @default("pending")
-  highlights        Json
-  conditionReport   Json // { overall, exterior, interior, mechanical, tires, documentation }
-  images            Json
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  // Relations
-  vehicle           Vehicle @relation(fields: [vehicleId], references: [id])
-  auction           Auction @relation(fields: [auctionId], references: [id])
-  bids              Bid[]
-  proxyBids         ProxyBid[]
-
-  @@map("auction_vehicles")
-}
-
-model Bid {
-  id                String @id @default(cuid())
-  vehicleId         String
-  auctionVehicleId   String
-  bidderId          String
-  amount            Float
-  timestamp         DateTime @default(now())
-  type              BidType @default(MANUAL)
-  status            BidStatus @default(ACTIVE)
-  paymentId         String? // M-Pesa transaction ID
-
-  // Relations
-  bidder            User @relation(fields: [bidderId], references: [id])
-  vehicle           Vehicle @relation(fields: [vehicleId], references: [id])
-  auctionVehicle    AuctionVehicle @relation(fields: [auctionVehicleId], references: [id])
-
-  @@map("bids")
-}
-
-model ProxyBid {
-  id                String @id @default(cuid())
-  vehicleId         String
-  auctionVehicleId   String
-  bidderId          String
-  maximumAmount     Float
-  currentBid        Float @default(0)
-  incrementAmount   Float
-  isActive          Boolean @default(true)
-  createdAt         DateTime @default(now())
-  lastTriggeredAt   DateTime?
-  autoRenew         Boolean @default(false)
-
-  // Relations
-  bidder            User @relation(fields: [bidderId], references: [id])
-  vehicle           Vehicle @relation(fields: [vehicleId], references: [id])
-  auctionVehicle    AuctionVehicle @relation(fields: [auctionVehicleId], references: [id])
-
-  @@map("proxy_bids")
-}
-
-model Sale {
-  id                String @id @default(cuid())
-  vehicleId         String
-  dealerId          String
-  customerId        String
-  salespersonId     String?
-  saleDate          DateTime @default(now())
-  salePrice         Float
-  saleType          SaleType @default(RETAIL)
-  status            SaleStatus @default(PENDING)
-  paymentMethod     PaymentMethod @default(CASH)
-  commission        Float
-  profit            Float
-  taxes             Float
-  fees              Json // { documentation, registration, other }
-  notes             String?
-  documents         Json? // { logbook, transfer, insurance }
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  // Relations
-  vehicle           Vehicle @relation(fields: [vehicleId], references: [id])
-  dealer            DealerProfile @relation(fields: [dealerId], references: [userId])
-  customer          CustomerProfile @relation(fields: [customerId], references: [userId])
-  salesperson       SalespersonProfile? @relation(fields: [salespersonId], references: [userId])
-  buyer             User @relation(fields: [customerId], references: [id])
-
-  @@map("sales")
-}
-
-model Lead {
-  id                String @id @default(cuid())
-  name              String
-  email             String
-  phone             String
-  source            String
-  status            LeadStatus @default(NEW)
-  priority          String @default("medium")
-  vehicleInterest   Json
-  budget            Float?
-  timeline          String?
-  assignedTo        String? // Salesperson ID
-  customerId        String?
-  createdDate       DateTime @default(now())
-  lastContactDate   DateTime?
-  followUpDate      DateTime?
-  notes             Json
-
-  // Relations
-  assignedSalesperson SalespersonProfile? @relation(fields: [assignedTo], references: [userId])
-  customer          CustomerProfile? @relation(fields: [customerId], references: [userId])
-  buyer             User? @relation(fields: [customerId], references: [id])
-
-  @@map("leads")
-}
-
-model Notification {
-  id                String @id @default(cuid())
-  userId            String
-  type              String
-  title             String
-  message           String
-  data              Json? // Additional notification data
-  read              Boolean @default(false)
-  createdAt         DateTime @default(now())
-
-  // Relations
-  user              User @relation(fields: [userId], references: [id])
-
-  @@map("notifications")
-}
-
-model AuthSession {
-  id                String @id @default(cuid())
-  userId            String
-  token             String
-  refreshToken      String
-  expiresAt         DateTime
-  isActive          Boolean @default(true)
-  createdAt         DateTime @default(now())
-
-  // Relations
-  user              User @relation(fields: [userId], references: [id])
-
-  @@map("auth_sessions")
-}
-
-model PlatformSettings {
-  id                String @id @default(cuid())
-  key               String @unique
-  value             Json
-  description       String?
-  updatedAt         DateTime @updatedAt
-
-  @@map("platform_settings")
-}
-
-model Transaction {
-  id                String @id @default(cuid())
-  type              TransactionType
-  amount            Float
-  currency          String @default("KES")
-  status            TransactionStatus @default(PENDING)
-  paymentMethod     String
-  reference         String? // M-Pesa transaction ID
-  metadata          Json? // Additional transaction data
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  @@map("transactions")
-}
-
-// Enums
-enum UserRole {
-  ADMIN
-  DEALER
-  CUSTOMER
-  SALESPERSON
-}
-
-enum UserStatus {
-  ACTIVE
-  INACTIVE
-  SUSPENDED
-}
-
-enum VehicleStatus {
-  PENDING
-  AVAILABLE
-  SOLD
-  REJECTED
-}
-
-enum NtsaStatus {
-  CLEARED
-  PENDING
-  FAILED
-}
-
-enum AuctionType {
-  LIVE
-  ONLINE
-  SEALED_BID
-}
-
-enum AuctionStatus {
+model AuctionStatus {
   UPCOMING
   ACTIVE
   ENDED
   CANCELLED
 }
 
-enum BidType {
-  MANUAL
-  AUTO
-  PROXY
+// Bid Management
+model Bid {
+  id          String    @id @default(cuid())
+  amount      Int
+  status      BidStatus @default(PENDING)
+  
+  // Foreign Keys
+  vehicleId   String
+  vehicle     Vehicle @relation(fields: [vehicleId], references: [id])
+  
+  bidderId    String
+  bidder      User @relation(fields: [bidderId], references: [id])
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("bids")
 }
 
-enum BidStatus {
-  ACTIVE
-  OUTBID
-  WINNING
-}
-
-enum SaleType {
-  RETAIL
-  AUCTION
-  WHOLESALE
-  FLEET
-}
-
-enum SaleStatus {
+model BidStatus {
   PENDING
-  COMPLETED
-  CANCELLED
-  REFUNDED
+  ACCEPTED
+  REJECTED
+  EXPIRED
 }
 
-enum PaymentMethod {
-  CASH
-  FINANCING
-  LEASE
-  TRADE
-  MPESA
-  BANK_TRANSFER
+// Message Management
+model Message {
+  id          String    @id @default(cuid())
+  content     String
+  isRead      Boolean    @default(false)
+  
+  // Foreign Keys
+  senderId    String
+  sender      User @relation(fields: [senderId], references: [id])
+  
+  receiverId  String?
+  receiver    User? @relation(fields: [receiverId], references: [id])
+  
+  // Optional foreign keys for context
+  vehicleId   String?
+  vehicle     Vehicle? @relation(fields: [vehicleId], references: [id])
+  
+  dealerId    String?
+  dealer      Dealer? @relation(fields: [dealerId], references: [id])
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("messages")
 }
 
-enum SubscriptionPlan {
-  FREE
-  STANDARD
-  PRO
+// Notification Management
+model Notification {
+  id          String     @id @default(cuid())
+  type        NotificationType
+  title       String
+  message     String
+  isRead      Boolean     @default(false)
+  
+  // Optional action data
+  actionUrl   String?
+  actionText  String?
+  
+  // Foreign Keys
+  userId      String
+  user        User @relation(fields: [userId], references: [id])
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("notifications")
 }
 
-enum LeadStatus {
-  NEW
-  CONTACTED
-  QUALIFIED
-  CONVERTED
-  CLOSED_LOST
+model NotificationType {
+  BID
+  OFFER
+  MESSAGE
+  AUCTION
+  PAYMENT
+  SYSTEM
 }
 
-enum TransactionType {
-  AUCTION_DEPOSIT
-  LISTING_FEE
-  SUBSCRIPTION
-  COMMISSION
-  SALE_PAYMENT
+// Review Management
+model Review {
+  id          String    @id @default(cuid())
+  rating      Int
+  comment     String
+  
+  // Foreign Keys
+  userId      String
+  user        User @relation(fields: [userId], references: [id])
+  
+  dealerId    String?
+  dealer      Dealer? @relation(fields: [dealerId], references: [id])
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("reviews")
 }
 
-enum TransactionStatus {
+// Payment Management
+model Payment {
+  id            String     @id @default(cuid())
+  amount         Int
+  currency       String     @default("KES")
+  status         PaymentStatus @default(PENDING)
+  method         String?
+  transactionId  String?    @unique
+  
+  // Foreign Keys
+  userId         String
+  user           User @relation(fields: [userId], references: [id])
+  
+  // Optional context
+  vehicleId      String?
+  vehicle        Vehicle? @relation(fields: [vehicleId], references: [id])
+  
+  listingId      String?
+  listing        Listing? @relation(fields: [listingId], references: [id])
+  
+  // Timestamps
+  dueDate        DateTime
+  completedAt    DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@map("payments")
+}
+
+model PaymentStatus {
   PENDING
   COMPLETED
   FAILED
-  CANCELLED
+  REFUNDED
+}
+
+// M-Pesa Integration
+model MpesaTransaction {
+  id                String     @id @default(cuid())
+  merchantRequestId  String     @unique
+  checkoutRequestId String?    @unique
+  amount            Int
+  phoneNumber       String
+  transactionId    String?
+  status            String
+  
+  // Foreign Keys
+  userId            String
+  user              User @relation(fields: [userId], references: [id])
+  
+  paymentId         String?
+  payment           Payment? @relation(fields: [paymentId], references: [id])
+  
+  // Timestamps
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@map("mpesa_transactions")
 }

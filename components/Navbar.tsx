@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { auth } from '@/lib/api';
 import { Button } from '@/components/ui/button';
+import Notifications from '@/components/Notifications';
 
 export default function Navbar() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -73,9 +74,11 @@ export default function Navbar() {
           {/* Desktop User Menu */}
           <div className="hidden lg:flex items-center space-x-4">
             {isAuthenticated ? (
-              <div className="flex items-center space-x-3">
-                <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center">
+              <div className="flex items-center space-x-4">
+                <Notifications />
+                
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
                     <span className="text-white font-medium text-sm">
                       {user.name?.charAt(0) || 'U'}
                     </span>

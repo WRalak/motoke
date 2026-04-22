@@ -122,94 +122,81 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Right - 3D Vehicle Display */}
+              {/* Right - Luxury Cars Display */}
               <div className="relative">
                 <div className="relative w-full h-96 lg:h-full min-h-[400px]">
-                  {/* 3D Car Container */}
+                  {/* Luxury Cars Carousel */}
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="relative w-full max-w-md">
-                      {/* Car SVG with 3D Effect */}
-                      <div className="relative transform-gpu animate-float">
-                        <svg
-                          viewBox="0 0 400 200"
-                          className="w-full h-auto drop-shadow-2xl"
-                          style={{
-                            filter: 'drop-shadow(0 25px 50px rgba(16, 185, 129, 0.3))'
-                          }}
-                        >
-                          {/* Car Body */}
-                          <g className="transform-gpu animate-rotate-slow">
-                            {/* Main Body */}
-                            <path
-                              d="M50 120 L80 100 L320 100 L350 120 L350 140 L320 160 L80 160 L50 140 Z"
-                              fill="url(#carGradient)"
-                              stroke="#10b981"
-                              strokeWidth="2"
-                            />
-                            
-                            {/* Roof */}
-                            <path
-                              d="M120 100 L180 60 L220 60 L280 100"
-                              fill="url(#roofGradient)"
-                              stroke="#10b981"
-                              strokeWidth="2"
-                            />
-                            
-                            {/* Windows */}
-                            <path
-                              d="M130 100 L175 70 L225 70 L270 100"
-                              fill="#1e293b"
-                              stroke="#10b981"
-                              strokeWidth="1"
-                              opacity="0.8"
-                            />
-                            
-                            {/* Wheels */}
-                            <circle cx="100" cy="160" r="20" fill="#1f2937" stroke="#10b981" strokeWidth="2"/>
-                            <circle cx="100" cy="160" r="10" fill="#374151"/>
-                            <circle cx="300" cy="160" r="20" fill="#1f2937" stroke="#10b981" strokeWidth="2"/>
-                            <circle cx="300" cy="160" r="10" fill="#374151"/>
-                            
-                            {/* Headlights */}
-                            <ellipse cx="340" cy="120" rx="15" ry="8" fill="#fbbf24" opacity="0.8"/>
-                            <ellipse cx="60" cy="120" rx="15" ry="8" fill="#ef4444" opacity="0.8"/>
-                            
-                            {/* Grill */}
-                            <rect x="320" y="115" width="20" height="10" fill="#1f2937" stroke="#10b981" strokeWidth="1"/>
-                          </g>
+                    <div className="relative w-full max-w-2xl">
+                      {/* Main Luxury Car Image */}
+                      <div className="relative animate-float">
+                        <div className="relative w-full h-64 lg:h-80 rounded-lg overflow-hidden shadow-2xl">
+                          <img
+                            src="https://images.unsplash.com/photo-1550355291-bbee04a92027?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                            alt="Luxury Sports Car"
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                           
-                          {/* Gradients */}
-                          <defs>
-                            <linearGradient id="carGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                              <stop offset="0%" stopColor="#1e293b"/>
-                              <stop offset="50%" stopColor="#334155"/>
-                              <stop offset="100%" stopColor="#1e293b"/>
-                            </linearGradient>
-                            <linearGradient id="roofGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                              <stop offset="0%" stopColor="#1e293b"/>
-                              <stop offset="100%" stopColor="#0f172a"/>
-                            </linearGradient>
-                          </defs>
-                        </svg>
+                          {/* Car Badge */}
+                          <div className="absolute top-4 right-4 bg-green-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                            Premium
+                          </div>
+                          
+                          {/* Car Details Overlay */}
+                          <div className="absolute bottom-4 left-4 text-white">
+                            <h3 className="text-2xl font-bold mb-1">Mercedes-Benz AMG</h3>
+                            <p className="text-sm opacity-90">Starting from KES 12M</p>
+                          </div>
+                        </div>
                       </div>
                       
-                      {/* Floating Particles */}
-                      <div className="absolute -top-10 -left-10 w-4 h-4 bg-green-500 rounded-full animate-float-particle opacity-60"></div>
-                      <div className="absolute -top-5 -right-8 w-3 h-3 bg-blue-500 rounded-full animate-float-particle-delayed opacity-60"></div>
-                      <div className="absolute top-20 left-5 w-2 h-2 bg-purple-500 rounded-full animate-float-particle opacity-60"></div>
-                      <div className="absolute bottom-10 -right-5 w-3 h-3 bg-green-500 rounded-full animate-float-particle-delayed opacity-60"></div>
+                      {/* Thumbnail Gallery */}
+                      <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 bg-gray-800/90 backdrop-blur-sm rounded-full p-2">
+                        <div className="w-16 h-12 rounded overflow-hidden border-2 border-green-500 cursor-pointer">
+                          <img
+                            src="https://images.unsplash.com/photo-1550355291-bbee04a92027?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80"
+                            alt="Sports Car"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="w-16 h-12 rounded overflow-hidden border border-gray-600 cursor-pointer hover:border-green-500 transition-colors">
+                          <img
+                            src="https://images.unsplash.com/photo-1542362567-b07e54358753?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80"
+                            alt="Luxury SUV"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="w-16 h-12 rounded overflow-hidden border border-gray-600 cursor-pointer hover:border-green-500 transition-colors">
+                          <img
+                            src="https://images.unsplash.com/photo-1583121274602-3e2825c82b78?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80"
+                            alt="Classic Car"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="w-16 h-12 rounded overflow-hidden border border-gray-600 cursor-pointer hover:border-green-500 transition-colors">
+                          <img
+                            src="https://images.unsplash.com/photo-1617656119427-406b8b1a7d86?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80"
+                            alt="Electric Car"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </div>
+                      
+                      {/* Floating Luxury Elements */}
+                      <div className="absolute -top-8 -left-8 w-6 h-6 bg-green-500/20 rounded-full animate-float-pulse"></div>
+                      <div className="absolute top-12 -right-6 w-4 h-4 bg-blue-500/20 rounded-full animate-float-pulse-delayed"></div>
+                      <div className="absolute -bottom-6 left-12 w-3 h-3 bg-purple-500/20 rounded-full animate-float-pulse"></div>
                     </div>
                   </div>
 
-                  {/* Background Vehicle Silhouettes */}
-                  <div className="absolute inset-0 flex items-center justify-center opacity-20">
-                    <svg viewBox="0 0 400 200" className="w-full h-auto transform scale-110">
-                      <path
-                        d="M50 120 L80 100 L320 100 L350 120 L350 140 L320 160 L80 160 L50 140 Z"
-                        fill="#10b981"
-                        opacity="0.1"
-                      />
-                    </svg>
+                  {/* Background Luxury Car Silhouettes */}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-10">
+                    <div className="grid grid-cols-3 gap-8">
+                      <div className="w-24 h-16 bg-gradient-to-r from-gray-700 to-gray-600 rounded-lg transform rotate-12"></div>
+                      <div className="w-32 h-20 bg-gradient-to-r from-gray-700 to-gray-600 rounded-lg transform -rotate-6"></div>
+                      <div className="w-28 h-18 bg-gradient-to-r from-gray-700 to-gray-600 rounded-lg transform rotate-3"></div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -225,45 +212,49 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Custom Styles for 3D Animations */}
+      {/* Custom Styles for Luxury Car Animations */}
       <style jsx>{`
         @keyframes float {
-          0%, 100% { transform: translateY(0px) rotateX(0deg); }
-          50% { transform: translateY(-20px) rotateX(5deg); }
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-15px); }
         }
         
-        @keyframes rotate-slow {
-          0% { transform: rotateY(0deg); }
-          100% { transform: rotateY(360deg); }
+        @keyframes float-pulse {
+          0%, 100% { 
+            transform: translateY(0px) scale(1); 
+            opacity: 0.2; 
+          }
+          50% { 
+            transform: translateY(-10px) scale(1.1); 
+            opacity: 0.3; 
+          }
         }
         
-        @keyframes float-particle {
-          0%, 100% { transform: translateY(0px) translateX(0px); }
-          25% { transform: translateY(-10px) translateX(5px); }
-          50% { transform: translateY(-5px) translateX(-5px); }
-          75% { transform: translateY(-15px) translateX(3px); }
-        }
-        
-        @keyframes float-particle-delayed {
-          0%, 100% { transform: translateY(0px) translateX(0px); }
-          33% { transform: translateY(-8px) translateX(-3px); }
-          66% { transform: translateY(-12px) translateX(4px); }
+        @keyframes float-pulse-delayed {
+          0%, 100% { 
+            transform: translateY(0px) scale(1); 
+            opacity: 0.2; 
+          }
+          33% { 
+            transform: translateY(-8px) scale(1.05); 
+            opacity: 0.25; 
+          }
+          66% { 
+            transform: translateY(-12px) scale(1.08); 
+            opacity: 0.28; 
+          }
         }
         
         .animate-float {
-          animation: float 6s ease-in-out infinite;
+          animation: float 4s ease-in-out infinite;
         }
         
-        .animate-rotate-slow {
-          animation: rotate-slow 20s linear infinite;
+        .animate-float-pulse {
+          animation: float-pulse 3s ease-in-out infinite;
         }
         
-        .animate-float-particle {
-          animation: float-particle 4s ease-in-out infinite;
-        }
-        
-        .animate-float-particle-delayed {
-          animation: float-particle-delayed 5s ease-in-out infinite;
+        .animate-float-pulse-delayed {
+          animation: float-pulse-delayed 4s ease-in-out infinite;
         }
         
         .delay-1000 {

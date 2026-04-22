@@ -1,17 +1,23 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Dealer, mockDealers } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function DealersPage() {
+  const router = useRouter();
   const [dealers, setDealers] = useState<Dealer[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSpecialty, setSelectedSpecialty] = useState('all');
   const [selectedCity, setSelectedCity] = useState('all');
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const handleViewInventory = (dealerId: string) => {
+    router.push(`/dealers/${dealerId}`);
+  };
 
   useEffect(() => {
     // Simulate API call
@@ -205,7 +211,11 @@ export default function DealersPage() {
 
                 {/* Actions */}
                 <div className="space-y-2 pt-4 border-t border-gray-700">
-                  <Button className="w-full bg-green-600 hover:bg-green-700 text-white" size="sm">
+                  <Button 
+                    className="w-full bg-green-600 hover:bg-green-700 text-white" 
+                    size="sm"
+                    onClick={() => handleViewInventory(dealer.id)}
+                  >
                     View Inventory
                   </Button>
                   <div className="grid grid-cols-2 gap-2">
