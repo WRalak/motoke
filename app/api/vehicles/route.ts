@@ -1,72 +1,108 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
+import { rateLimiters, getClientIdentifier, rateLimitStore } from '@/lib/rate-limit';
+import { validatePagination, validateSearchParams } from '@/lib/validation';
+import { vehicleCache } from '@/lib/cache';
 
 export async function GET(request: NextRequest) {
   try {
+    // Rate limiting
+    const clientId = getClientIdentifier(request);
+    const rateLimit = rateLimiters.vehicles(clientId);
+    
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { error: rateLimit.message },
+        { 
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': '100',
+            'X-RateLimit-Remaining': '0',
+            'X-RateLimit-Reset': rateLimit.resetTime?.toString() || ''
+          }
+        }
+      );
+    }
+
+    // Validate and parse query parameters
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
-    const search = searchParams.get('search') || '';
-    const make = searchParams.get('make') || '';
-    const status = searchParams.get('status') || 'available';
-    const county = searchParams.get('county') || '';
-    const minPrice = searchParams.get('minPrice') ? parseFloat(searchParams.get('minPrice')!) : undefined;
-    const maxPrice = searchParams.get('maxPrice') ? parseFloat(searchParams.get('maxPrice')!) : undefined;
+    const { page, limit, skip } = validatePagination(
+      searchParams.get('page') || undefined,
+      searchParams.get('limit') || undefined
+    );
+    
+    const validatedParams = validateSearchParams(searchParams);
 
-    const skip = (page - 1) * limit;
+    // Create cache key
+    const cacheKey = `vehicles:${JSON.stringify(validatedParams)}:${page}:${limit}`;
 
-    const where: any = {
-      status: status === 'all' ? undefined : status,
-      make: make === 'all' ? undefined : make,
-      county: county === 'all' ? undefined : county,
-      price: minPrice !== undefined || maxPrice !== undefined ? {
-        gte: minPrice,
-        lte: maxPrice
-      } : undefined,
-      OR: search ? [
-        { make: { contains: search, mode: 'insensitive' } },
-        { model: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } }
-      ] : undefined
-    };
+    // Try to get from cache first
+    const cached = vehicleCache.getList()(cacheKey, async () => {
+      // Build database query
+      const where: any = {
+        status: validatedParams.status === 'all' ? undefined : validatedParams.status,
+        make: validatedParams.make === 'all' ? undefined : validatedParams.make,
+        county: validatedParams.county === 'all' ? undefined : validatedParams.county,
+        price: validatedParams.minPrice !== undefined || validatedParams.maxPrice !== undefined ? {
+          gte: validatedParams.minPrice,
+          lte: validatedParams.maxPrice
+        } : undefined,
+        OR: validatedParams.search ? [
+          { make: { contains: validatedParams.search, mode: 'insensitive' } },
+          { model: { contains: validatedParams.search, mode: 'insensitive' } },
+          { description: { contains: validatedParams.search, mode: 'insensitive' } }
+        ] : undefined
+      };
 
-    // Remove undefined filters
-    Object.keys(where).forEach(key => {
-      if (where[key] === undefined) {
-        delete where[key];
-      }
-    });
+      // Remove undefined filters
+      Object.keys(where).forEach(key => {
+        if (where[key] === undefined) {
+          delete where[key];
+        }
+      });
 
-    const [vehicles, total] = await Promise.all([
-      prisma.vehicle.findMany({
-        where,
-        include: {
-          dealer: {
-            include: {
-              user: {
-                select: {
-                  name: true,
-                  phone: true,
-                  email: true
+      // Execute database queries with timeout
+      const [vehicles, total] = await Promise.all([
+        prisma.vehicle.findMany({
+          where,
+          include: {
+            dealer: {
+              include: {
+                user: {
+                  select: {
+                    name: true,
+                    phone: true,
+                    email: true,
+                    phoneVerified: true
+                  }
                 }
               }
             }
-          }
-        },
-        orderBy: { createdAt: 'desc' },
-        skip,
-        take: limit
-      }),
-      prisma.vehicle.count({ where })
-    ]);
+          },
+          orderBy: { createdAt: 'desc' },
+          skip,
+          take: Math.min(limit, 100) // Hard limit to prevent excessive data
+        }),
+        prisma.vehicle.count({ where })
+      ]);
 
-    return NextResponse.json({
-      vehicles,
-      pagination: {
-        page,
-        limit,
-        total,
-        pages: Math.ceil(total / limit)
+      return {
+        vehicles,
+        pagination: {
+          page,
+          limit,
+          total,
+          pages: Math.ceil(total / limit)
+        }
+      };
+    });
+
+    return NextResponse.json(cached, {
+      headers: {
+        'X-RateLimit-Limit': '100',
+        'X-RateLimit-Remaining': Math.max(0, 100 - (rateLimitStore.get(clientId)?.count || 0)).toString(),
+        'X-RateLimit-Reset': rateLimit.resetTime?.toString() || '',
+        'Cache-Control': 'public, max-age=120' // 2 minutes cache
       }
     });
   } catch (error) {

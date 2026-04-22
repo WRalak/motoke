@@ -1,15 +1,46 @@
 import { PrismaClient } from '@prisma/client'
 
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined
+declare global {
+  var __prisma: PrismaClient | undefined
 }
 
-export const prisma = globalForPrisma.prisma ?? new PrismaClient({
+// Enhanced Prisma Client with connection pooling and error handling
+export const prisma = globalThis.__prisma ?? new PrismaClient({
   datasources: {
     db: {
-      url: 'file:./dev.db'
+      url: process.env.DATABASE_URL
     }
-  }
+  },
+  // Connection pooling for better performance
+  __internal: {
+    engine: {
+      // Enable connection pooling
+      connectionLimit: 20,
+      // Set timeout for connections
+      connectTimeout: 10000,
+      // Set timeout for queries
+      queryTimeout: 30000,
+    }
+  },
+  // Error handling
+  log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+  // Retry failed queries
+  errorFormat: 'pretty'
 })
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+// Graceful shutdown handling
+process.on('beforeExit', async () => {
+  await prisma.$disconnect()
+})
+
+process.on('SIGINT', async () => {
+  await prisma.$disconnect()
+  process.exit(0)
+})
+
+process.on('SIGTERM', async () => {
+  await prisma.$disconnect()
+  process.exit(0)
+})
+
+if (process.env.NODE_ENV !== 'production') globalThis.__prisma = prisma
