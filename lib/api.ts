@@ -76,6 +76,7 @@ export const vehicles = {
     county?: string;
     minPrice?: number;
     maxPrice?: number;
+    sortBy?: string;
   }) => {
     // Mock implementation for now
     const mockVehicles = [
@@ -256,21 +257,99 @@ export const auctions = {
     status?: string;
     type?: string;
   }) => {
-    const searchParams = new URLSearchParams();
-    
-    Object.entries(params || {}).forEach(([key, value]) => {
-      if (value !== undefined && value !== '') {
-        searchParams.append(key, value.toString());
+    // Mock implementation for now
+    const mockAuctions = [
+      {
+        id: 'auction1',
+        title: 'Spring Luxury Vehicle Auction',
+        description: 'Premium luxury and exotic vehicles from private collections and dealer trade-ins.',
+        type: 'ONLINE',
+        status: 'ACTIVE',
+        startDate: new Date('2024-04-15T10:00:00Z'),
+        endDate: new Date('2024-04-15T18:00:00Z'),
+        location: 'Los Angeles Convention Center, Hall A',
+        organizer: 'Premier Auction House',
+        fees: { buyerPremium: 10, registrationFee: 200, otherFees: ['Online bidding fee: $50', 'Wire transfer fee: $25'] },
+        requirements: { deposit: 1000, maxBidders: 500, preApproval: true },
+        images: ['/images/auctions/luxury-1.jpg', '/images/auctions/luxury-2.jpg'],
+        auctionVehicles: [
+          {
+            id: 'av1',
+            vehicleId: '1',
+            startingBid: 2000000,
+            currentBid: 2350000,
+            reservePrice: 2500000,
+            bidCount: 7,
+            status: 'bidding',
+            highlights: ['Low mileage', 'One owner', 'Service records', 'Excellent condition'],
+            conditionReport: {
+              overall: 'excellent',
+              exterior: 'Minor scratches on rear bumper, otherwise excellent paint and finish',
+              interior: 'Like new, no wear on seats or controls',
+              mechanical: 'Perfect running condition, recent service completed',
+              tires: '90% tread life remaining',
+              documentation: 'Clean title, complete service history available'
+            },
+            images: ['/images/vehicles/auction-camry-1.jpg', '/images/vehicles/auction-camry-2.jpg']
+          }
+        ],
+        bids: [
+          {
+            id: 'bid1',
+            amount: 2350000,
+            type: 'MANUAL',
+            status: 'WINNING',
+            bidderId: 'customer1',
+            createdAt: new Date('2024-04-15T11:30:00Z')
+          }
+        ]
+      },
+      {
+        id: 'auction2',
+        title: 'Summer Sports Car Auction',
+        description: 'Great deals on sports cars and convertibles from private sellers.',
+        type: 'ONLINE',
+        status: 'UPCOMING',
+        startDate: new Date('2024-05-01T10:00:00Z'),
+        endDate: new Date('2024-05-01T18:00:00Z'),
+        location: 'Nairobi Exhibition Center',
+        organizer: 'Auto Kenya Auctions',
+        fees: { buyerPremium: 8, registrationFee: 150, otherFees: ['Catalog fee: $30', 'Processing fee: $15'] },
+        requirements: { deposit: 500, maxBidders: 300, preApproval: false },
+        images: ['/images/auctions/sports-1.jpg', '/images/auctions/sports-2.jpg'],
+        auctionVehicles: [
+          {
+            id: 'av2',
+            vehicleId: '2',
+            startingBid: 1500000,
+            currentBid: 1500000,
+            reservePrice: 1800000,
+            bidCount: 3,
+            status: 'pending',
+            highlights: ['Low mileage', 'Well maintained', 'Service records available'],
+            conditionReport: {
+              overall: 'good',
+              exterior: 'Minor wear and tear',
+              interior: 'Clean and well-maintained',
+              mechanical: 'Runs well, no issues detected',
+              tires: '70% tread life remaining',
+              documentation: 'Service records available'
+            },
+            images: ['/images/vehicles/sports-1.jpg', '/images/vehicles/sports-2.jpg']
+          }
+        ],
+        bids: []
       }
+    ];
+
+    // Apply filters
+    let filteredAuctions = mockAuctions.filter(auction => {
+      const matchesStatus = !params?.status || auction.status === params.status;
+      const matchesType = !params?.type || auction.type === params.type;
+      return matchesStatus && matchesType;
     });
 
-    const response = await fetch(`${API_BASE_URL}/api/auctions?${searchParams}`);
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch auctions');
-    }
-    
-    return response.json();
+    return filteredAuctions;
   },
 
   create: async (auctionData: any) => {

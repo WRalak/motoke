@@ -68,20 +68,20 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
-        <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
+      <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-12 sm:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold mb-4 sm:mb-6">
               Find Your Perfect Vehicle
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-blue-100">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 sm:mb-8 text-blue-100 px-4">
               Buy, sell, and auction vehicles with confidence. Kenya's trusted automotive marketplace.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+              <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 w-full sm:w-auto">
                 Browse Vehicles
               </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
+              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600 w-full sm:w-auto">
                 Sell Your Car
               </Button>
             </div>
@@ -90,38 +90,38 @@ export default function Home() {
       </section>
 
       {/* Trust Bar */}
-      <section className="bg-white py-8 border-b">
+      <section className="bg-white py-6 sm:py-8 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 text-center">
             <div>
-              <div className="text-3xl font-bold text-blue-600 mb-2">1000+</div>
-              <div className="text-gray-600">Verified Vehicles</div>
+              <div className="text-2xl sm:text-3xl font-bold text-blue-600 mb-2">1000+</div>
+              <div className="text-sm sm:text-base text-gray-600">Verified Vehicles</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-blue-600 mb-2">500+</div>
-              <div className="text-gray-600">Trusted Dealers</div>
+              <div className="text-2xl sm:text-3xl font-bold text-blue-600 mb-2">500+</div>
+              <div className="text-sm sm:text-base text-gray-600">Trusted Dealers</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-blue-600 mb-2">50+</div>
-              <div className="text-gray-600">Live Auctions</div>
+              <div className="text-2xl sm:text-3xl font-bold text-blue-600 mb-2">50+</div>
+              <div className="text-sm sm:text-base text-gray-600">Live Auctions</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-blue-600 mb-2">NTSA</div>
-              <div className="text-gray-600">Certified Platform</div>
+              <div className="text-2xl sm:text-3xl font-bold text-blue-600 mb-2">NTSA</div>
+              <div className="text-sm sm:text-base text-gray-600">Certified Platform</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Featured Vehicles */}
-      <section className="py-16">
+      <section className="py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Featured Vehicles</h2>
-            <p className="text-gray-600">Discover our handpicked selection of quality vehicles</p>
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Featured Vehicles</h2>
+            <p className="text-gray-600 px-4">Discover our handpicked selection of quality vehicles</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {featuredVehicles.map((vehicle) => (
               <Card key={vehicle.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <div className="aspect-video bg-gray-200">
@@ -131,26 +131,26 @@ export default function Home() {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="text-lg font-semibold">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-4">
+                    <div className="mb-2 sm:mb-0">
+                      <h3 className="text-base sm:text-lg font-semibold">
                         {vehicle.year} {vehicle.make} {vehicle.model}
                       </h3>
-                      <p className="text-gray-600">{vehicle.mileage.toLocaleString()} km</p>
+                      <p className="text-gray-600 text-sm">{vehicle.mileage.toLocaleString()} km</p>
                     </div>
-                    <div className="text-xl font-bold text-blue-600">
+                    <div className="text-lg sm:text-xl font-bold text-blue-600">
                       {formatCurrency(vehicle.price)}
                     </div>
                   </div>
-                  <div className="flex gap-2 mb-4">
+                  <div className="flex flex-wrap gap-1 sm:gap-2 mb-4">
                     {vehicle.features.slice(0, 3).map((feature: string, index: number) => (
                       <span key={index} className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">
                         {feature}
                       </span>
                     ))}
                   </div>
-                  <Button className="w-full" onClick={() => router.push(`/vehicle/${vehicle.id}`)}>
+                  <Button className="w-full text-sm sm:text-base" onClick={() => router.push(`/vehicle/${vehicle.id}`)}>
                     View Details
                   </Button>
                 </CardContent>

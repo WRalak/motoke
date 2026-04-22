@@ -132,9 +132,79 @@ export default function BrowsePage() {
           <p className="text-gray-600">Find your perfect vehicle from our extensive collection</p>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Filters Sidebar */}
-          <div className="lg:w-80">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+          {/* Mobile Filter Toggle */}
+          <div className="lg:hidden">
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg">Filters</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Search */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    placeholder="Search make, model..."
+                    value={filters.search}
+                    onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                  />
+                </div>
+
+                {/* Make */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Make</label>
+                  <select
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    value={filters.make}
+                    onChange={(e) => setFilters(prev => ({ ...prev, make: e.target.value }))}
+                  >
+                    {makes.map(make => (
+                      <option key={make} value={make}>
+                        {make === 'all' ? 'All Makes' : make}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Year */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Year</label>
+                  <select
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    value={filters.year}
+                    onChange={(e) => setFilters(prev => ({ ...prev, year: e.target.value }))}
+                  >
+                    {years.map(year => (
+                      <option key={year} value={year}>
+                        {year === 'all' ? 'All Years' : year}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Price Range */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Price Range</label>
+                  <select
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    value={filters.priceRange}
+                    onChange={(e) => setFilters(prev => ({ ...prev, priceRange: e.target.value }))}
+                  >
+                    {priceRanges.map(range => (
+                      <option key={range.value} value={range.value}>
+                        {range.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Desktop Filters Sidebar */}
+          <div className="hidden lg:block lg:w-80">
             <Card>
               <CardHeader>
                 <CardTitle>Filters</CardTitle>

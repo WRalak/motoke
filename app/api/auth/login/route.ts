@@ -12,22 +12,10 @@ export async function POST(request: NextRequest) {
 
     // Find user
     const users = await prisma.$queryRaw`
-      SELECT 
-        u.id,
-        u.email,
-        u.password,
-        u.name,
-        u.phone,
-        u.role,
-        u.status,
-        u.emailVerified,
-        u.phoneVerified,
-        u.createdAt,
-        u.lastLoginAt
+      SELECT u.id, u.email, u.password, u.name, u.phone, u.role, u.status, u.emailVerified, u.phoneVerified, u.createdAt, u.lastLoginAt 
       FROM User u 
-      WHERE u.email = $1
-    `, [email];
-
+      WHERE u.email = ${email}
+    `;
     const foundUser = users[0];
 
     if (!foundUser) {
@@ -63,11 +51,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Update last login
-    await prisma.$queryRaw`
+    const updateQuery = `
       UPDATE User 
       SET lastLoginAt = $1
       WHERE id = $2
-    `, [new Date().toISOString(), foundUser.id];
+    `;
+    await prisma.$queryRaw(updateQuery, [new Date().toISOString(), foundUser.id]);
 
     // Create JWT token
     const token = jwt.sign(
