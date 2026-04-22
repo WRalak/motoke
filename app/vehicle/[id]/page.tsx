@@ -31,8 +31,8 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-500"></div>
       </div>
     );
   }
@@ -42,15 +42,15 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* Main Content */}
           <div className="lg:col-span-2">
             {/* Image Gallery */}
-            <div className="bg-white rounded-lg shadow-md overflow-hidden mb-6">
-              <div className="aspect-video bg-gray-200 relative">
+            <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden mb-6 border border-gray-700">
+              <div className="aspect-video bg-gray-700 relative">
                 <img
                   src={vehicle.images[selectedImage]}
                   alt={`${vehicle.make} ${vehicle.model}`}
@@ -63,7 +63,7 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
                     key={index}
                     onClick={() => setSelectedImage(index)}
                     className={`aspect-square rounded overflow-hidden border-2 transition-all ${
-                      selectedImage === index ? 'border-blue-600' : 'border-gray-200'
+                      selectedImage === index ? 'border-green-500' : 'border-gray-600'
                     }`}
                   >
                     <img
@@ -77,23 +77,23 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
             </div>
 
             {/* Vehicle Details */}
-            <Card>
+            <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
-                <CardTitle className="text-2xl">
+                <CardTitle className="text-2xl text-white">
                   {vehicle.year} {vehicle.make} {vehicle.model}
                 </CardTitle>
-                <div className="text-3xl font-bold text-blue-600">
+                <div className="text-3xl font-bold text-green-500">
                   KES {vehicle.price.toLocaleString()}
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div>
-                  <h3 className="text-lg font-semibold mb-2">Description</h3>
-                  <p className="text-gray-600">{vehicle.description}</p>
+                  <h3 className="text-lg font-semibold mb-2 text-white">Description</h3>
+                  <p className="text-gray-300">{vehicle.description}</p>
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-semibold mb-2">Features</h3>
+                  <h3 className="text-lg font-semibold mb-2 text-white">Features</h3>
                   <div className="grid grid-cols-2 gap-2">
                     {vehicle.features.map((feature, index) => (
                       <div key={index} className="flex items-center space-x-2">

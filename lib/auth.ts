@@ -299,3 +299,96 @@ export const getAuthErrorMessage = (code: string): string => {
   
   return messages[code] || 'An unknown error occurred';
 };
+
+// Auth object for middleware compatibility
+export const auth = {
+  getToken: (): string | null => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('authToken');
+    }
+    return null;
+  },
+  
+  getUser: (): User | null => {
+    if (typeof window !== 'undefined') {
+      const userStr = localStorage.getItem('authUser');
+      return userStr ? JSON.parse(userStr) : null;
+    }
+    return null;
+  },
+  
+  login: async (credentials: LoginCredentials): Promise<AuthSession> => {
+    // Mock login - in real app, call API
+    const user = mockUsers.find(u => u.email === credentials.email);
+    if (!user) {
+      throw new Error(AUTH_ERRORS.INVALID_CREDENTIALS);
+    }
+    
+    const token = 'mock-jwt-token-' + Date.now();
+    const refreshToken = 'mock-refresh-token-' + Date.now();
+    
+    // Store in localStorage
+    localStorage.setItem('authToken', token);
+    localStorage.setItem('refreshToken', refreshToken);
+    localStorage.setItem('authUser', JSON.stringify(user));
+    
+    return {
+      user,
+      token,
+      refreshToken,
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
+      isActive: true
+    };
+  },
+  
+  register: async (data: RegisterData): Promise<AuthSession> => {
+    // Mock registration - in real app, call API
+    const newUser: User = {
+      id: Date.now().toString(),
+      email: data.email,
+      name: data.name,
+      role: data.role === 'dealer' ? 'dealer' : 'customer',
+      status: 'active',
+      profile: {
+        phone: data.phone
+      },
+      permissions: ROLE_PERMISSIONS[data.role === 'dealer' ? 'dealer' : 'customer'],
+      createdAt: new Date(),
+      emailVerified: false,
+      phoneVerified: false,
+      twoFactorEnabled: false
+    };
+    
+    const token = 'mock-jwt-token-' + Date.now();
+    const refreshToken = 'mock-refresh-token-' + Date.now();
+    
+    // Store in localStorage
+    localStorage.setItem('authToken', token);
+    localStorage.setItem('refreshToken', refreshToken);
+    localStorage.setItem('authUser', JSON.stringify(newUser));
+    
+    return {
+      user: newUser,
+      token,
+      refreshToken,
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      isActive: true
+    };
+  },
+  
+  logout: (): void => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('authUser');
+    }
+  },
+  
+  refreshToken: async (refreshToken: string): Promise<string> => {
+    return refreshAuthToken(refreshToken);
+  },
+  
+  verifyToken: (token: string): boolean => {
+    return !isTokenExpired(token);
+  }
+};

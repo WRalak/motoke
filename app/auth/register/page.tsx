@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { auth } from '@/lib/auth';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -19,26 +20,109 @@ export default function RegisterPage() {
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
+  const [fieldErrors, setFieldErrors] = useState({
+    email: '',
+    password: '',
+    confirmPassword: '',
+    name: '',
+    phone: ''
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePhone = (phone: string): boolean => {
+    const phoneRegex = /^[\d\s\-\+\(\)]+$/;
+    return phoneRegex.test(phone) && phone.replace(/\D/g, '').length >= 10;
+  };
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors.length > 0) setErrors([]);
+    // Clear field error when user starts typing
+    if (fieldErrors[field as keyof typeof fieldErrors]) {
+      setFieldErrors(prev => ({ ...prev, [field]: '' }));
+    }
   };
 
   const validateForm = () => {
+    const newFieldErrors = {
+      email: '',
+      password: '',
+      confirmPassword: '',
+      name: '',
+      phone: ''
+    };
     const newErrors: string[] = [];
+    let isValid = true;
 
-    if (!formData.email) newErrors.push('Email is required');
-    if (!formData.password) newErrors.push('Password is required');
-    if (formData.password.length < 8) newErrors.push('Password must be at least 8 characters');
-    if (formData.password !== formData.confirmPassword) newErrors.push('Passwords do not match');
-    if (!formData.name) newErrors.push('Name is required');
-    if (formData.role === 'dealer' && !formData.phone) newErrors.push('Phone number is required for dealers');
-    if (!formData.agreeToTerms) newErrors.push('You must agree to the Terms of Service');
-    if (!formData.agreeToPrivacy) newErrors.push('You must agree to the Privacy Policy');
+    // Email validation
+    if (!formData.email) {
+      newFieldErrors.email = 'Email is required';
+      isValid = false;
+    } else if (!validateEmail(formData.email)) {
+      newFieldErrors.email = 'Please enter a valid email';
+      isValid = false;
+    }
 
+    // Password validation
+    if (!formData.password) {
+      newFieldErrors.password = 'Password is required';
+      isValid = false;
+    } else if (formData.password.length < 8) {
+      newFieldErrors.password = 'Password must be at least 8 characters';
+      isValid = false;
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
+      newFieldErrors.password = 'Password must contain uppercase, lowercase, and number';
+      isValid = false;
+    }
+
+    // Confirm password validation
+    if (!formData.confirmPassword) {
+      newFieldErrors.confirmPassword = 'Please confirm your password';
+      isValid = false;
+    } else if (formData.password !== formData.confirmPassword) {
+      newFieldErrors.confirmPassword = 'Passwords do not match';
+      isValid = false;
+    }
+
+    // Name validation
+    if (!formData.name) {
+      newFieldErrors.name = 'Name is required';
+      isValid = false;
+    } else if (formData.name.length < 2) {
+      newFieldErrors.name = 'Name must be at least 2 characters';
+      isValid = false;
+    }
+
+    // Phone validation for dealers
+    if (formData.role === 'dealer') {
+      if (!formData.phone) {
+        newFieldErrors.phone = 'Phone number is required for dealers';
+        isValid = false;
+      } else if (!validatePhone(formData.phone)) {
+        newFieldErrors.phone = 'Please enter a valid phone number';
+        isValid = false;
+      }
+    }
+
+    // Terms validation
+    if (!formData.agreeToTerms) {
+      newErrors.push('You must agree to the Terms of Service');
+      isValid = false;
+    }
+    if (!formData.agreeToPrivacy) {
+      newErrors.push('You must agree to the Privacy Policy');
+      isValid = false;
+    }
+
+    setFieldErrors(newFieldErrors);
     setErrors(newErrors);
-    return newErrors.length === 0;
+    return isValid;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -47,30 +131,32 @@ export default function RegisterPage() {
     if (!validateForm()) return;
 
     setLoading(true);
+    setErrors([]);
 
-    // Simulate API call
-    setTimeout(() => {
-      // Mock registration logic
-      console.log('Registration data:', formData);
-      alert('Registration successful! Please check your email to verify your account.');
-      router.push('/auth/login');
+    try {
+      const session = await auth.register(formData);
+      // Redirect to login with success message
+      router.push('/auth/login?message=registration-success');
+    } catch (error) {
+      setErrors(['Registration failed. Please try again.']);
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">Create your account</h1>
-          <p className="mt-2 text-gray-600">Join Motoke and start buying or selling vehicles</p>
+          <h1 className="text-3xl font-bold text-green-500">Create Account</h1>
+          <p className="mt-2 text-gray-300">Join Motoke and start buying or selling vehicles</p>
         </div>
 
         {/* Registration Form */}
-        <Card>
+        <Card className="bg-gray-800 border-gray-700">
           <CardHeader>
-            <CardTitle>Sign Up</CardTitle>
+            <CardTitle className="text-white">Sign Up</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">

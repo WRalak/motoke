@@ -90,45 +90,45 @@ export default function CalculatorPage() {
   };
 
   const creditScoreRanges = {
-    excellent: { min: 750, label: 'Excellent (750+)', color: 'text-green-600' },
-    good: { min: 700, max: 749, label: 'Good (700-749)', color: 'text-blue-600' },
-    fair: { min: 650, max: 699, label: 'Fair (650-699)', color: 'text-yellow-600' },
-    poor: { max: 649, label: 'Poor (Below 650)', color: 'text-red-600' }
+    excellent: { min: 750, label: 'Excellent (750+)', color: 'text-green-400' },
+    good: { min: 700, max: 749, label: 'Good (700-749)', color: 'text-blue-400' },
+    fair: { min: 650, max: 699, label: 'Fair (650-699)', color: 'text-yellow-400' },
+    poor: { max: 649, label: 'Poor (Below 650)', color: 'text-red-400' }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Hire Purchase Calculator</h1>
-          <p className="text-gray-600">Calculate your monthly payments and compare financing options</p>
+          <h1 className="text-3xl font-bold text-green-500 mb-2">Hire Purchase Calculator</h1>
+          <p className="text-gray-300">Calculate your monthly payments and compare financing options</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Calculator */}
           <div className="lg:col-span-2">
-            <Card>
+            <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
-                <CardTitle>Payment Calculator</CardTitle>
+                <CardTitle className="text-white">Payment Calculator</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
                       Vehicle Price (KES)
                     </label>
                     <input
                       type="number"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-700 text-white"
                       value={calculatorData.vehiclePrice}
                       onChange={(e) => handleInputChange('vehiclePrice', e.target.value)}
                       min="0"
@@ -136,28 +136,28 @@ export default function CalculatorPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
                       Down Payment (KES)
                     </label>
                     <input
                       type="number"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-700 text-white"
                       value={calculatorData.downPayment}
                       onChange={(e) => handleInputChange('downPayment', e.target.value)}
                       min="0"
                       max={calculatorData.vehiclePrice}
                     />
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="text-xs text-gray-400 mt-1">
                       {((calculatorData.downPayment / calculatorData.vehiclePrice) * 100).toFixed(1)}% of vehicle price
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
                       Loan Term (Months)
                     </label>
                     <select
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-700 text-white"
                       value={calculatorData.loanTerm}
                       onChange={(e) => handleInputChange('loanTerm', e.target.value)}
                     >
@@ -171,12 +171,12 @@ export default function CalculatorPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
                       Interest Rate (%)
                     </label>
                     <input
                       type="number"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-700 text-white"
                       value={calculatorData.interestRate}
                       onChange={(e) => handleInputChange('interestRate', e.target.value)}
                       min="0"
@@ -187,30 +187,30 @@ export default function CalculatorPage() {
                 </div>
 
                 {/* Results */}
-                <div className="bg-blue-50 rounded-lg p-6">
-                  <h3 className="text-lg font-semibold text-blue-900 mb-4">Monthly Payment Breakdown</h3>
+                <div className="bg-gray-700 rounded-lg p-6 border border-gray-600">
+                  <h3 className="text-lg font-semibold text-green-500 mb-4">Monthly Payment Breakdown</h3>
                   <div className="space-y-3">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Monthly Payment:</span>
-                      <span className="text-2xl font-bold text-blue-600">
+                      <span className="text-gray-300">Monthly Payment:</span>
+                      <span className="text-2xl font-bold text-green-500">
                         KES {calculatorData.monthlyPayment.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Total Amount Paid:</span>
-                      <span className="font-semibold">
+                      <span className="text-gray-300">Total Amount Paid:</span>
+                      <span className="font-semibold text-white">
                         KES {calculatorData.totalPayment.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Total Interest:</span>
-                      <span className="font-semibold">
+                      <span className="text-gray-300">Total Interest:</span>
+                      <span className="font-semibold text-white">
                         KES {calculatorData.totalInterest.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Loan Amount:</span>
-                      <span className="font-semibold">
+                      <span className="text-gray-300">Loan Amount:</span>
+                      <span className="font-semibold text-white">
                         KES {(calculatorData.vehiclePrice - calculatorData.downPayment).toLocaleString()}
                       </span>
                     </div>
@@ -219,7 +219,7 @@ export default function CalculatorPage() {
 
                 {/* Credit Score Selector */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                  <label className="block text-sm font-medium text-gray-300 mb-3">
                     Your Credit Score
                   </label>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -230,8 +230,8 @@ export default function CalculatorPage() {
                         onClick={() => setSelectedCreditScore(key as any)}
                         className={`p-3 rounded-lg border-2 transition-all ${
                           selectedCreditScore === key
-                            ? 'border-blue-600 bg-blue-50'
-                            : 'border-gray-200 hover:border-gray-300'
+                            ? 'border-green-500 bg-gray-700'
+                            : 'border-gray-600 hover:border-gray-500 bg-gray-800'
                         }`}
                       >
                         <div className={`font-medium ${range.color}`}>
@@ -247,48 +247,48 @@ export default function CalculatorPage() {
 
           {/* Lender Comparison */}
           <div className="space-y-6">
-            <Card>
+            <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
-                <CardTitle>Available Lenders</CardTitle>
-                <p className="text-sm text-gray-600">Compare interest rates from different lenders</p>
+                <CardTitle className="text-white">Available Lenders</CardTitle>
+                <p className="text-sm text-gray-400">Compare interest rates from different lenders</p>
               </CardHeader>
               <CardContent className="space-y-4">
                 {lenders.map((lender) => (
-                  <div key={lender.id} className="border rounded-lg p-4">
+                  <div key={lender.id} className="border border-gray-600 rounded-lg p-4 bg-gray-700">
                     <div className="flex justify-between items-start mb-3">
                       <div>
-                        <h4 className="font-semibold">{lender.name}</h4>
-                        <p className="text-sm text-gray-600 capitalize">{lender.type.replace('_', ' ')}</p>
+                        <h4 className="font-semibold text-white">{lender.name}</h4>
+                        <p className="text-sm text-gray-400 capitalize">{lender.type.replace('_', ' ')}</p>
                       </div>
                       <div className="text-right">
-                        <div className="text-lg font-bold text-blue-600">
+                        <div className="text-lg font-bold text-green-500">
                           {getInterestRateForCreditScore(lender).toFixed(1)}%
                         </div>
-                        <div className="text-xs text-gray-500">Interest rate</div>
+                        <div className="text-xs text-gray-400">Interest rate</div>
                       </div>
                     </div>
 
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Min Credit Score:</span>
-                        <span>{lender.minCreditScore}</span>
+                        <span className="text-gray-400">Min Credit Score:</span>
+                        <span className="text-white">{lender.minCreditScore}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Max Loan:</span>
-                        <span>KES {lender.maxLoanAmount.toLocaleString()}</span>
+                        <span className="text-gray-400">Max Loan:</span>
+                        <span className="text-white">KES {lender.maxLoanAmount.toLocaleString()}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Loan Terms:</span>
-                        <span>{lender.loanTerms.join(', ')} months</span>
+                        <span className="text-gray-400">Loan Terms:</span>
+                        <span className="text-white">{lender.loanTerms.join(', ')} months</span>
                       </div>
                     </div>
 
-                    <div className="mt-3 pt-3 border-t">
+                    <div className="mt-3 pt-3 border-t border-gray-600">
                       <div className="flex items-center justify-between">
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-gray-400">
                           {lender.preApprovalAvailable ? 'Pre-approval available' : 'No pre-approval'}
                         </span>
-                        <Button size="sm" variant="outline">
+                        <Button size="sm" variant="outline" className="border-green-600 text-green-500 hover:bg-green-600 hover:text-white">
                           Apply
                         </Button>
                       </div>

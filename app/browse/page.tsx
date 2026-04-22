@@ -117,35 +117,35 @@ export default function BrowsePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Browse Vehicles</h1>
-          <p className="text-gray-600">Find your perfect vehicle from our extensive collection</p>
+          <h1 className="text-3xl font-bold text-green-500 mb-2">Browse Vehicles</h1>
+          <p className="text-gray-300">Find your perfect vehicle from our extensive collection</p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           {/* Mobile Filter Toggle */}
           <div className="lg:hidden">
-            <Card>
+            <Card className="bg-gray-800 border-gray-700">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Filters</CardTitle>
+                <CardTitle className="text-lg text-white">Filters</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Search */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Search</label>
                   <input
                     type="text"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-sm bg-gray-700 text-white"
                     placeholder="Search make, model..."
                     value={filters.search}
                     onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
@@ -154,9 +154,9 @@ export default function BrowsePage() {
 
                 {/* Make */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Make</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Make</label>
                   <select
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-sm bg-gray-700 text-white"
                     value={filters.make}
                     onChange={(e) => setFilters(prev => ({ ...prev, make: e.target.value }))}
                   >
@@ -170,9 +170,9 @@ export default function BrowsePage() {
 
                 {/* Year */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Year</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Year</label>
                   <select
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-sm bg-gray-700 text-white"
                     value={filters.year}
                     onChange={(e) => setFilters(prev => ({ ...prev, year: e.target.value }))}
                   >
@@ -186,9 +186,9 @@ export default function BrowsePage() {
 
                 {/* Price Range */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Price Range</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Price Range</label>
                   <select
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-sm bg-gray-700 text-white"
                     value={filters.priceRange}
                     onChange={(e) => setFilters(prev => ({ ...prev, priceRange: e.target.value }))}
                   >
@@ -205,17 +205,17 @@ export default function BrowsePage() {
 
           {/* Desktop Filters Sidebar */}
           <div className="hidden lg:block lg:w-80">
-            <Card>
+            <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
-                <CardTitle>Filters</CardTitle>
+                <CardTitle className="text-white">Filters</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Search */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Search</label>
                   <input
                     type="text"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-700 text-white"
                     placeholder="Search make, model..."
                     value={filters.search}
                     onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
@@ -224,9 +224,9 @@ export default function BrowsePage() {
 
                 {/* Make */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Make</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Make</label>
                   <select
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-700 text-white"
                     value={filters.make}
                     onChange={(e) => setFilters(prev => ({ ...prev, make: e.target.value }))}
                   >
@@ -240,9 +240,9 @@ export default function BrowsePage() {
 
                 {/* Year */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Year</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Year</label>
                   <select
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-700 text-white"
                     value={filters.year}
                     onChange={(e) => setFilters(prev => ({ ...prev, year: e.target.value }))}
                   >
@@ -256,7 +256,7 @@ export default function BrowsePage() {
 
                 {/* Price Range */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Price Range</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Price Range</label>
                   <select
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     value={filters.priceRange}
@@ -357,17 +357,17 @@ export default function BrowsePage() {
             {/* Vehicle Grid/List */}
             {filteredVehicles.length === 0 ? (
               <div className="text-center py-12">
-                <div className="text-gray-400 text-6xl mb-4">car</div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No vehicles found</h3>
-                <p className="text-gray-600">Try adjusting your filters or search terms</p>
+                <div className="text-gray-500 text-6xl mb-4">car</div>
+                <h3 className="text-lg font-medium text-white mb-2">No vehicles found</h3>
+                <p className="text-gray-400">Try adjusting your filters or search terms</p>
               </div>
             ) : (
               <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}>
                 {filteredVehicles.map((vehicle) => (
-                  <Card key={vehicle.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <Card key={vehicle.id} className="overflow-hidden hover:shadow-lg transition-shadow bg-gray-800 border-gray-700">
                     {viewMode === 'grid' ? (
                       <>
-                        <div className="aspect-video bg-gray-200">
+                        <div className="aspect-video bg-gray-700">
                           <img
                             src={vehicle.images && vehicle.images[0] ? vehicle.images[0] : '/images/placeholder-car.jpg'}
                             alt={`${vehicle.make} ${vehicle.model}`}
@@ -377,29 +377,29 @@ export default function BrowsePage() {
                         <CardContent className="p-6">
                           <div className="flex justify-between items-start mb-4">
                             <div>
-                              <h3 className="text-lg font-semibold">
+                              <h3 className="text-lg font-semibold text-white">
                                 {vehicle.year} {vehicle.make} {vehicle.model}
                               </h3>
-                              <p className="text-gray-600">{vehicle.mileage && vehicle.mileage.toLocaleString()} km</p>
+                              <p className="text-gray-400">{vehicle.mileage && vehicle.mileage.toLocaleString()} km</p>
                             </div>
-                            <div className="text-xl font-bold text-blue-600">
+                            <div className="text-xl font-bold text-green-500">
                               {formatCurrency(vehicle.price)}
                             </div>
                           </div>
                           <div className="flex gap-2 mb-4">
-                            {vehicle.features && vehicle.features.slice(0, 2).map((feature, index) => (
-                              <span key={index} className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">
+                            {vehicle.features && vehicle.features.slice(0, 2).map((feature: any, index: number) => (
+                              <span key={index} className="px-2 py-1 bg-gray-700 text-gray-300 text-xs rounded">
                                 {feature}
                               </span>
                             ))}
                           </div>
-                          <Button className="w-full">View Details</Button>
+                          <Button className="w-full bg-green-600 hover:bg-green-700 text-white">View Details</Button>
                         </CardContent>
                       </>
                     ) : (
                       <CardContent className="p-6">
                         <div className="flex gap-6">
-                          <div className="w-48 h-32 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+                          <div className="w-48 h-32 bg-gray-700 rounded-lg overflow-hidden flex-shrink-0">
                             <img
                               src={vehicle.images && vehicle.images[0] ? vehicle.images[0] : '/images/placeholder-car.jpg'}
                               alt={`${vehicle.make} ${vehicle.model}`}
@@ -409,25 +409,25 @@ export default function BrowsePage() {
                           <div className="flex-1">
                             <div className="flex justify-between items-start mb-4">
                               <div>
-                                <h3 className="text-lg font-semibold">
+                                <h3 className="text-lg font-semibold text-white">
                                   {vehicle.year} {vehicle.make} {vehicle.model}
                                 </h3>
-                                <p className="text-gray-500 text-sm line-clamp-1">{vehicle.description}</p>
+                                <p className="text-gray-400 text-sm line-clamp-1">{vehicle.description}</p>
                               </div>
                               <div className="text-right">
-                                <div className="text-xl font-bold text-blue-600">
+                                <div className="text-xl font-bold text-green-500">
                                   {formatCurrency(vehicle.price)}
                                 </div>
                               </div>
                             </div>
                             <div className="flex gap-2 mb-4">
                               {vehicle.features && vehicle.features.slice(0, 4).map((feature: any, index: number) => (
-                                <span key={index} className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">
+                                <span key={index} className="px-2 py-1 bg-gray-700 text-gray-300 text-xs rounded">
                                   {feature}
                                 </span>
                               ))}
                             </div>
-                            <Button className="w-full">View Details</Button>
+                            <Button className="w-full bg-green-600 hover:bg-green-700 text-white">View Details</Button>
                           </div>
                         </div>
                       </CardContent>

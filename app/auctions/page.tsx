@@ -50,38 +50,38 @@ export default function AuctionsPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-900 text-green-300';
       case 'upcoming':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-900 text-blue-300';
       case 'ended':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-700 text-gray-300';
       case 'cancelled':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-900 text-red-300';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-700 text-gray-300';
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Vehicle Auctions</h1>
-          <p className="text-gray-600">Browse and participate in live and upcoming vehicle auctions</p>
+          <h1 className="text-3xl font-bold text-green-500 mb-2">Vehicle Auctions</h1>
+          <p className="text-gray-300">Browse and participate in live and upcoming vehicle auctions</p>
         </div>
 
         {/* Filter Tabs */}
         <div className="mb-8">
-          <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+          <div className="flex space-x-1 bg-gray-800 p-1 rounded-lg border border-gray-700">
             {[
               { key: 'all', label: 'All Auctions' },
               { key: 'active', label: 'Live Now' },
@@ -93,8 +93,8 @@ export default function AuctionsPage() {
                 onClick={() => setFilter(tab.key as any)}
                 className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                   filter === tab.key
-                    ? 'bg-white text-blue-600 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? 'bg-gray-700 text-green-500 shadow-sm'
+                    : 'text-gray-400 hover:text-white'
                 }`}
               >
                 {tab.label}
@@ -106,9 +106,9 @@ export default function AuctionsPage() {
         {/* Auction Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredAuctions.map((auction) => (
-            <Card key={auction.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+            <Card key={auction.id} className="overflow-hidden hover:shadow-lg transition-shadow bg-gray-800 border-gray-700">
               {/* Auction Image */}
-              <div className="aspect-video bg-gray-200 relative">
+              <div className="aspect-video bg-gray-700 relative">
                 <img
                   src={auction.images[0] || '/images/placeholder-auction.jpg'}
                   alt={auction.title}

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 export default function SellPage() {
   const [formData, setFormData] = useState({
@@ -81,12 +82,13 @@ export default function SellPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 py-8">
+    <ProtectedRoute>
+      <div className="min-h-screen bg-gray-900">
+        <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Sell Your Vehicle</h1>
-          <p className="text-gray-600">List your vehicle for sale and reach thousands of buyers</p>
+          <h1 className="text-3xl font-bold text-green-500 mb-2">Sell Your Vehicle</h1>
+          <p className="text-gray-300">List your vehicle for sale and reach thousands of buyers</p>
         </div>
 
         {/* Progress Steps */}
@@ -95,13 +97,13 @@ export default function SellPage() {
             {steps.map((s, index) => (
               <div key={s.number} className="flex items-center flex-1">
                 <div className={`flex items-center justify-center w-10 h-10 rounded-full ${
-                  step >= s.number ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+                  step >= s.number ? 'bg-green-600 text-white' : 'bg-gray-700 text-gray-400'
                 }`}>
                   {s.number}
                 </div>
                 <div className="ml-3 hidden sm:block">
                   <div className={`text-sm font-medium ${
-                    step >= s.number ? 'text-blue-600' : 'text-gray-600'
+                    step >= s.number ? 'text-green-500' : 'text-gray-400'
                   }`}>
                     {s.title}
                   </div>
@@ -109,7 +111,7 @@ export default function SellPage() {
                 </div>
                 {index < steps.length - 1 && (
                   <div className={`flex-1 h-1 mx-4 ${
-                    step > s.number ? 'bg-blue-600' : 'bg-gray-200'
+                    step > s.number ? 'bg-green-600' : 'bg-gray-700'
                   }`} />
                 )}
               </div>
@@ -120,18 +122,18 @@ export default function SellPage() {
         <form onSubmit={handleSubmit}>
           {/* Step 1: Basic Information */}
           {step === 1 && (
-            <Card>
+            <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
-                <CardTitle>Basic Vehicle Information</CardTitle>
+                <CardTitle className="text-white">Basic Vehicle Information</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
                       Make *
                     </label>
                     <select
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-700 text-white"
                       value={formData.make}
                       onChange={(e) => handleInputChange('make', e.target.value)}
                       required
@@ -454,6 +456,7 @@ export default function SellPage() {
           </div>
         </form>
       </div>
-    </div>
+      </div>
+    </ProtectedRoute>
   );
 }
