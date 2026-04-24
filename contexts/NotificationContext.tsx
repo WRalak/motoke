@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { auth } from '@/lib/auth';
+import { NotificationService } from '@/lib/notifications-client';
 
 export interface Notification {
   id: string;
@@ -40,82 +40,69 @@ interface NotificationProviderProps {
 
 export function NotificationProvider({ children }: NotificationProviderProps) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const notificationService = NotificationService.getInstance();
 
   // Load notifications from localStorage on mount
   useEffect(() => {
-    const user = auth.getUser();
-    if (!user) return;
-
-    const storedNotifications = localStorage.getItem(`notifications_${user.id}`);
-    if (storedNotifications) {
-      try {
-        const parsed = JSON.parse(storedNotifications);
-        setNotifications(parsed.map((n: any) => ({
-          ...n,
-          timestamp: new Date(n.timestamp)
-        })));
-      } catch (error) {
-        console.error('Error loading notifications:', error);
-      }
-    }
+    // Try to get user ID from localStorage or use a default
+    const userId = localStorage.getItem('userId') || 'demo-user';
+    const storedNotifications = notificationService.getInAppNotifications(userId);
+    // Convert stored notification format to Notification format
+    const formattedNotifications = storedNotifications.map((n: any) => ({
+      id: n.id || Date.now().toString(),
+      type: n.type,
+      title: n.templates?.inapp?.title || n.title || '',
+      message: n.templates?.inapp?.message || n.message || '',
+      timestamp: new Date(n.createdAt || n.timestamp || Date.now()),
+      read: n.read || false,
+      actionUrl: n.actionUrl,
+      actionText: n.actionText
+    }));
+    setNotifications(formattedNotifications);
   }, []);
 
-  // Save notifications to localStorage whenever they change
-  useEffect(() => {
-    const user = auth.getUser();
-    if (!user) return;
+  const addNotification = async (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
+    try {
+      // Try to get user ID from localStorage or use a default
+      const userId = localStorage.getItem('userId') || 'demo-user';
 
-    if (notifications.length > 0) {
-      localStorage.setItem(`notifications_${user.id}`, JSON.stringify(notifications));
-    }
-  }, [notifications]);
-
-  const addNotification = (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
-    const newNotification: Notification = {
-      ...notification,
-      id: Date.now().toString(),
-      timestamp: new Date(),
-      read: false
-    };
-
-    setNotifications(prev => [newNotification, ...prev]);
-
-    // Show browser notification if permission is granted
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification(notification.title, {
-        body: notification.message,
-        icon: '/favicon.ico',
-        tag: newNotification.id
-      });
-    }
-
-    // Send email and SMS notifications using notification service
-    const user = auth.getUser();
-    if (user) {
-      // Map notification types to template IDs
-      const templateMap: Record<string, string> = {
-        'bid': 'bid_received',
-        'auction': 'auction_ending',
-        'message': 'new_message',
-        'offer': 'offer_update',
-        'payment': 'payment_reminder',
-        'system': 'payment_reminder' // Use generic template for system notifications
+      // Convert to NotificationTemplate format
+      const template = {
+        id: Date.now().toString(),
+        type: notification.type,
+        channels: ['inapp'] as ('inapp' | 'email' | 'sms' | 'push')[],
+        templates: {
+          inapp: {
+            title: notification.title,
+            message: notification.message
+          }
+        }
       };
 
-      const templateId = templateMap[notification.type];
-      if (templateId) {
-        // Import notificationService dynamically to avoid circular dependency
-        import('@/lib/notifications').then(({ notificationService }) => {
-          notificationService.sendNotification(user.id, templateId, {
-            title: notification.title,
-            message: notification.message,
-            actionUrl: notification.actionUrl,
-            actionText: notification.actionText,
-            timestamp: newNotification.timestamp.toLocaleString()
-          }, ['email', 'sms']).catch(console.error);
-        });
-      }
+      await notificationService.sendNotification(userId, template, [
+        { type: 'inapp', enabled: true }
+      ]);
+
+      // Update local state
+      const updatedNotifications = notificationService.getInAppNotifications(userId);
+      // Convert stored notification format to Notification format
+      const formattedNotifications = updatedNotifications.map((n: any) => ({
+        id: n.id || Date.now().toString(),
+        type: n.type,
+        title: n.templates?.inapp?.title || n.title || '',
+        message: n.templates?.inapp?.message || n.message || '',
+        timestamp: new Date(n.createdAt || n.timestamp || Date.now()),
+        read: n.read || false,
+        actionUrl: n.actionUrl,
+        actionText: n.actionText
+      }));
+      setNotifications(formattedNotifications);
+    } catch (error) {
+      console.error('Error adding notification:', error);
     }
+
+    // Note: Email and SMS notifications would be handled by the backend API
+    // For now, we only handle in-app notifications on the client side
   };
 
   const markAsRead = (id: string) => {

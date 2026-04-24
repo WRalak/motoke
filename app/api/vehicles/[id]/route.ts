@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
+import { db } from '@/lib/mongodb';
 
 export async function GET(
   request: NextRequest,
@@ -7,23 +7,7 @@ export async function GET(
 ) {
   const { id } = await context.params;
   try {
-    const vehicle = await prisma.vehicle.findUnique({
-      where: { id },
-      include: {
-        dealer: {
-          include: {
-            user: {
-              select: {
-                name: true,
-                phone: true,
-                email: true,
-                phoneVerified: true
-              }
-            }
-          }
-        }
-      }
-    });
+    const vehicle = await db.vehicles.findById(id);
 
     if (!vehicle) {
       return NextResponse.json(
@@ -32,7 +16,9 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(vehicle);
+    const dealer = await db.dealers.findById(vehicle.dealerId);
+
+    return NextResponse.json({ ...vehicle, dealer });
   } catch (error) {
     console.error('Error fetching vehicle:', error);
     return NextResponse.json(

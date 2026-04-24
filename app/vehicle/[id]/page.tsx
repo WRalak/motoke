@@ -3,43 +3,75 @@
 import { useState, useEffect } from 'react';
 import { notFound } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import { Vehicle, Dealer, mockVehicles, mockDealers } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { auth } from '@/lib/auth';
+import { db } from '@/lib/mongodb';
 
 interface VehicleDetailPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
   const router = useRouter();
-  const [vehicle, setVehicle] = useState<Vehicle | null>(null);
-  const [dealer, setDealer] = useState<Dealer | null>(null);
+  const [vehicle, setVehicle] = useState<any>(null);
+  const [dealer, setDealer] = useState<any>(null);
   const [selectedImage, setSelectedImage] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const handleVehicleAction = (action: string) => {
-    if (!auth.getToken() || !auth.getUser()) {
-      router.push(`/auth/login?redirect=/vehicle/${params.id}`);
+  const handleVehicleAction = async (action: string) => {
+    const user = auth.getUser();
+    if (!user) {
+      const resolvedParams = await params;
+      router.push(`/auth/login?redirect=/vehicle/${resolvedParams.id}`);
       return;
     }
-    // Handle vehicle action logic here
-    console.log(`${action} for vehicle ${params.id}`);
+
+    const resolvedParams = await params;
+    switch (action) {
+      case 'make-offer':
+        router.push(`/vehicle/${resolvedParams.id}/offer`);
+        break;
+      case 'schedule-test-drive':
+        router.push(`/vehicle/${resolvedParams.id}/test-drive`);
+        break;
+      case 'contact-dealer':
+        router.push(`/vehicle/${resolvedParams.id}/contact`);
+        break;
+      case 'place-bid':
+        router.push(`/vehicle/${resolvedParams.id}/bid`);
+        break;
+      default:
+        break;
+    }
   };
 
   useEffect(() => {
-    const foundVehicle = mockVehicles.find(v => v.id === params.id);
-    if (!foundVehicle) {
-      notFound();
-    }
-    
-    const foundDealer = mockDealers.find(d => d.id === foundVehicle.dealerId);
-    
-    setVehicle(foundVehicle);
-    setDealer(foundDealer || null);
-    setLoading(false);
-  }, [params.id]);
+    const fetchVehicleData = async () => {
+      try {
+        const resolvedParams = await params;
+        const response = await fetch(`/api/vehicles/${resolvedParams.id}`);
+        
+        if (!response.ok) {
+          if (response.status === 404) {
+            notFound();
+          }
+          throw new Error('Failed to fetch vehicle');
+        }
+
+        const vehicleData = await response.json();
+        
+        setVehicle(vehicleData);
+        setDealer(vehicleData.dealer);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching vehicle data:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchVehicleData();
+  }, [params]);
 
   if (loading) {
     return (
