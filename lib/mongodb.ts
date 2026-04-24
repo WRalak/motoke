@@ -1,25 +1,10 @@
 import { MongoClient } from 'mongodb';
 
-const uri = process.env.DATABASE_URL || 'mongodb://localhost:27017/motoke';
-
-let client: MongoClient;
-let db: any;
-
-export async function connectToDatabase() {
-  if (!client) {
-    client = new MongoClient(uri);
-    await client.connect();
-    db = client.db('motoke');
-  }
-  return db;
-}
-
 let dbConnection: any = null;
 
 export async function connectToDatabase() {
   if (!dbConnection) {
-    const uri = process.env.DATABASE_URL || 'mongodb+srv://wallaceralak_db_user:qm6UcAUGe2MKTMUr@cluster0.tubrxkb.mongodb.net/?appName=Cluster0';
-    const { MongoClient } = require('mongodb');
+    const uri = process.env.DATABASE_URL || 'mongodb://localhost:27017/motoke';
     const client = new MongoClient(uri);
     await client.connect();
     dbConnection = client.db('motoke');
