@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
   // Public routes that don't require authentication
@@ -27,7 +27,8 @@ export function middleware(request: NextRequest) {
     '/messages',
     '/bids',
     '/purchases',
-    '/admin'
+    '/admin',
+    '/dealer'
   ];
 
   // Check if the current path is public
@@ -60,6 +61,14 @@ export function middleware(request: NextRequest) {
   if (pathname.startsWith('/admin') && token) {
     // For demo purposes, check if token contains admin
     if (!token.includes('admin')) {
+      return NextResponse.redirect(new URL('/browse', request.url));
+    }
+  }
+
+  // Dealer routes require dealer role - simple check for demo
+  if (pathname.startsWith('/dealer') && token) {
+    // For demo purposes, check if token contains dealer
+    if (!token.includes('dealer') && !token.includes('admin')) {
       return NextResponse.redirect(new URL('/browse', request.url));
     }
   }
